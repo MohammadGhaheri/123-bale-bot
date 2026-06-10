@@ -1,0 +1,13 @@
+/vendor/
+.env
+.env.*
+!.env.example
+*.log
+/logs/
+/cache/
+/tmp/
+/.phpunit.cache/
+/.idea/
+/.vscode/
+Thumbs.db
+.DS_Store
