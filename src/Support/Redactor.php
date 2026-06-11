@@ -13,7 +13,9 @@ final class Redactor
         'password',
         'api_key',
         'database_url',
+        'phone',
         'phone_number',
+        'otp',
     ];
 
     public static function redact(mixed $value): mixed

@@ -76,6 +76,17 @@ Supported by official docs:
 - Payments and mini-app data are documented but need real sandbox testing
   before high-level wrappers are added.
 
+## OTP Gateway
+
+Bale OTP is not part of the regular Bot API. The official Gateway documentation
+uses `https://safir.bale.ai/api/v2/auth/token` for client-credentials
+authentication and `https://safir.bale.ai/api/v2/send_otp` for sending OTP
+codes to Iranian mobile numbers. This package implements that flow in
+`OneTwoThree\BaleBot\Otp\OtpClient`.
+
+The documented phone format is `989123456789`, and OTP values must be numeric
+with 3 to 8 digits. Gateway credentials must not be confused with bot tokens.
+
 ## Proposed Architecture
 
 - `Client`: low-level API access, retries, response parsing, API exceptions.

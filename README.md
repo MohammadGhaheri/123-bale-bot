@@ -24,6 +24,7 @@
 - دریافت updateها با `getUpdates`
 - تنظیم و حذف webhook
 - سیستم router برای command، message، callback و fallback
+- کلاینت جداگانه برای ارسال OTP از طریق Gateway بله
 - handlerهای آماده برای شروع، راهنما، echo و پیام ناشناخته
 - middleware برای بررسی secret داخلی webhook
 - storageهای نمونه شامل memory، file و SQLite
@@ -63,6 +64,10 @@ BALE_WEBHOOK_SECRET=your-random-secret
 BALE_API_BASE_URL=https://tapi.bale.ai
 APP_ENV=local
 LOG_LEVEL=debug
+BALE_OTP_CLIENT_ID=your-bale-otp-client-id
+BALE_OTP_CLIENT_SECRET=your-bale-otp-client-secret
+BALE_OTP_BASE_URL=https://safir.bale.ai/api/v2
+BALE_OTP_SCOPE=read
 ```
 
 فایل `.env.example` فقط مقدارهای نمونه دارد. فایل `.env` واقعی نباید commit شود.
@@ -115,6 +120,29 @@ $bot->deleteWebhook();
 $poller = new OneTwoThree\BaleBot\Polling\Poller($bot, $router);
 $poller->run();
 ```
+
+## ارسال OTP با Gateway بله
+
+ارسال OTP جزو Bot API معمولی نیست و از طریق Gateway بله انجام می‌شود. برای
+استفاده باید از درگاه/سامانه بله دسترسی گرفته باشید و `client_id` و
+`client_secret` داشته باشید.
+
+```php
+<?php
+
+use OneTwoThree\BaleBot\Otp\OtpClient;
+use OneTwoThree\BaleBot\Otp\OtpConfig;
+
+require __DIR__ . '/vendor/autoload.php';
+
+$otp = new OtpClient(OtpConfig::fromEnv($_ENV + $_SERVER));
+
+$result = $otp->sendOtp('09123456789', 123456);
+```
+
+این کلاینت شماره `09123456789` را به فرمت رسمی `989123456789` تبدیل می‌کند.
+کد OTP باید عددی ۳ تا ۸ رقمی باشد. جزئیات بیشتر در
+[`docs/otp.md`](docs/otp.md) آمده است.
 
 ## ساخت Router و Handler
 
@@ -187,6 +215,7 @@ final class SupportTicketHandler implements BotHandlerInterface
 - بله نگهداری آخرین ۲۰۰۰ پیام تا ۲۴ ساعت را برای updateها مستند کرده است.
 - webhook طبق مستندات روی پورت‌های `443` و `88` پشتیبانی می‌شود.
 - برخی امکانات مثل پرداخت، mini app، فایل‌ها و متدهای خاص بله نیاز به تست واقعی بیشتری دارند.
+- OTP با شماره موبایل از طریق Gateway/Safir بله انجام می‌شود و بخشی از Bot API معمولی نیست.
 
 جزئیات بیشتر در فایل [`docs/bale-api-notes.md`](docs/bale-api-notes.md) آمده است.
 
@@ -196,6 +225,7 @@ final class SupportTicketHandler implements BotHandlerInterface
 - rate limitهای دقیق در مستندات بررسی‌شده به شکل کامل مشخص نبودند.
 - پرداخت، مدیریت پیشرفته چت، stickerها و mini appها قبل از تولید wrapper کامل نیاز به تست واقعی دارند.
 - upload چندبخشی فایل‌ها در نسخه‌های بعدی باید کامل‌تر و عملی‌تر شود.
+- ارسال OTP اضافه شده، اما نیازمند credential واقعی Gateway بله و موجودی/اشتراک فعال است.
 
 ## اجرای تست‌ها
 
